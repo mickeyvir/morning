@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Good Morning Surprise ✨</title>
+
+  <!-- Google Fonts: Pacifico for [NAAM] + Quicksand & Plus Jakarta Sans paired with 'sunrise 2' stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ==========================================================================
+       1. FONT & ROOT THEME TOKENS
+       ========================================================================== */
+    @font-face {
+      font-family: 'sunrise 2';
+      src: local('Quicksand'), local('Plus Jakarta Sans');
+      font-display: swap;
+    }
+
+    :root {
+      /* Default Theme Variables (Crush Mode - dynamically updated via JS CONFIG) */
+      --bg-base: #fff9fc;
+      --blob-1: #ff758c;
+      --blob-2: #a18cd1;
+      --blob-3: #8fd3f4;
+      --btn-grad: linear-gradient(135deg, #ff758c 0%, #a18cd1 55%, #70b8ff 100%);
+      --btn-glow: rgba(255, 117, 140, 0.45);
+      --text-grad: linear-gradient(120deg, #ff5e8e, #9b6ef3, #4facfe, #ff5e8e);
+      --accent-soft: rgba(255, 117, 140, 0.14);
+      --card-border: rgba(255, 255, 255, 0.78);
+      --sun-core: radial-gradient(circle at 35% 35%, #fff9c4 0%, #ffd54f 35%, #ff8a65 75%, #ff5252 100%);
+      --sun-glow: rgba(255, 183, 77, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-base);
+      font-family: 'sunrise 2', 'Quicksand', 'Plus Jakarta Sans', sans-serif;
+      color: #2d2638;
+      transition: background-color 0.8s ease;
+    }
+
+    .font-name {
+      font-family: 'Pacifico', cursive;
+    }
+
+    /* ==========================================================================
+       2. AMBIENT BACKGROUND: BLURRY BLOBS, GRAIN TEXTURE & FLOATING EMOJIS
+       ========================================================================== */
+    .ambient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(72px);
+      opacity: 0.55;
+      will-change: transform;
+    }
+
+    .blob-1 {
+      width: 68vw;
+      height: 68vw;
+      max-width: 460px;
+      max-height: 460px;
+      background: var(--blob-1);
+      top: -12%;
+      left: -14%;
+      animation: floatBlob1 16s ease-in-out infinite alternate;
+    }
+
+    .blob-2 {
+      width: 72vw;
+      height: 72vw;
+      max-width: 500px;
+      max-height: 500px;
+      background: var(--blob-2);
+      bottom: -15%;
+      right: -16%;
+      animation: floatBlob2 19s ease-in-out infinite alternate;
+    }
+
+    .blob-3 {
+      width: 58vw;
+      height: 58vw;
+      max-width: 390px;
+      max-height: 390px;
+      background: var(--blob-3);
+      top: 38%;
+      left: 28%;
+      animation: floatBlob3 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatBlob1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(16vw, 12vh) scale(1.15); }
+    }
+
+    @keyframes floatBlob2 {
+      0% { transform: translate(0, 0) scale(1.05); }
+      100% { transform: translate(-18vw, -14vh) scale(0.92); }
+    }
+
+    @keyframes floatBlob3 {
+      0% { transform: translate(-8vw, 6vh) scale(0.95); }
+      100% { transform: translate(12vw, -10vh) scale(1.12); }
+    }
+
+    /* Subtle Film/Paper Grain Overlay */
+    .grain-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.042;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Floating Rising Emojis Layer */
+    .emoji-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-emoji {
+      position: absolute;
+      bottom: -50px;
+      opacity: 0;
+      animation: riseEmoji linear forwards;
+      will-change: transform, opacity;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.06));
+    }
+
+    @keyframes riseEmoji {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.42;
+      }
+      85% {
+        opacity: 0.35;
+      }
+      100% {
+        transform: translateY(-112vh) translateX(var(--drift, 25px)) rotate(var(--rot, 25deg)) scale(1.15);
+        opacity: 0;
+      }
+    }
+
+    /* ==========================================================================
+       3. PREMIUM GLOSSY PILL BUTTONS WITH SHINE SWEEP
+       ========================================================================== */
+    .btn-glossy {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      border-radius: 9999px;
+      background: var(--btn-grad);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      border: 1.5px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 10px 26px -4px var(--btn-glow), inset 0 2px 4px rgba(255, 255, 255, 0.45);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, opacity 0.3s ease;
+    }
+
+    .btn-glossy:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 14px 32px -3px var(--btn-glow), inset 0 2px 6px rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-glossy:active {
+      transform: scale(0.96);
+    }
+
+    /* Sweeping Glossy Shine Line */
+    .btn-glossy::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -75%;
+      width: 45%;
+      height: 200%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.65) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: rotate(25deg);
+      animation: shineSweep 3.2s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes shineSweep {
+      0% { left: -75%; }
+      45% { left: 135%; }
+      100% { left: 135%; }
+    }
+
+    /* Secondary Soft Pill Button */
+    .btn-soft {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #4a4058;
+      font-weight: 700;
+      font-size: 1rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 20px rgba(31, 24, 48, 0.08);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-soft:hover {
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(31, 24, 48, 0.12);
+    }
+
+    .btn-soft:active {
+      transform: scale(0.95);
+    }
+
+    /* ==========================================================================
+       4. GLASSMORPHISM CARDS & SCREEN TRANSITIONS
+       ========================================================================== */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.68);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1.5px solid var(--card-border);
+      border-radius: 2rem;
+      box-shadow:
+        0 20px 50px rgba(45, 35, 65, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    }
+
+    .screen {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(14px) scale(0.98);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0.65s;
+      pointer-events: none;
+    }
+
+    .screen.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* ==========================================================================
+       5. SCREEN 1: INTERACTIVE SUNRISE STYLES
+       ========================================================================== */
+    .sunrise-sky-wash {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 95%, rgba(255, 195, 113, 0.45) 0%, rgba(255, 238, 173, 0) 68%);
+      opacity: 0.15;
+      transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s ease;
+    }
+
+    .sun-orb {
+      position: fixed;
+      left: 50%;
+      bottom: -85px;
+      width: 170px;
+      height: 170px;
+      margin-left: -85px;
+      border-radius: 50%;
+      background: var(--sun-core);
+      box-shadow:
+        0 0 45px 15px var(--sun-glow),
+        0 0 100px 35px rgba(255, 167, 38, 0.35);
+      z-index: 5;
+      cursor: pointer;
+      transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.75s ease;
+      will-change: transform;
+    }
+
+    .sun-orb::before {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 213, 79, 0.55);
+      animation: spinRays 20s linear infinite;
+    }
+
+    @keyframes spinRays {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .horizon-line {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 28vh;
+      background: linear-gradient(to top, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 100%);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    .pulse-hint {
+      animation: softPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.04); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       6. SCREEN 2: SHIMMERING GRADIENT NAME & TYPEWRITER CURSOR
+       ========================================================================== */
+    .shimmer-name {
+      background: var(--text-grad);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmerText 4s linear infinite;
+      filter: drop-shadow(0 6px 16px rgba(255, 117, 140, 0.18));
+      line-height: 1.35;
+      padding: 0.15em 0.1em;
+    }
+
+    @keyframes shimmerText {
+      0% { background-position: 0% center; }
+      100% { background-position: 250% center; }
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.15em;
+      background-color: #ff758c;
+      margin-left: 3px;
+      vertical-align: text-bottom;
+      animation: blinkCursor 0.8s step-end infinite;
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ==========================================================================
+       7. SCREEN 3: PLAN ITEM STAGGERED ANIMATION
+       ========================================================================== */
+    .plan-item {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97);
+      transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .plan-item.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ==========================================================================
+       8. SCREEN 4: RUNAWAY BUTTON & FUNNY LINE TRANSITION
+       ========================================================================== */
+    #btn-nahi {
+      transition: left 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  top 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.2s ease;
+      z-index: 60;
+      touch-action: none;
+    }
+
+    #btn-haan {
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      z-index: 25;
+    }
+
+    @keyframes notePop {
+      0% { transform: scale(0.92) translateY(6px); opacity: 0.6; }
+      60% { transform: scale(1.05) translateY(-2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .note-pop {
+      animation: notePop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* ==========================================================================
+       9. SCREEN 5: HEARTBEAT EMOJI & CONFETTI CANVAS
+       ========================================================================== */
+    .heartbeat-emoji {
+      display: inline-block;
+      animation: heartBeat 1.25s ease-in-out infinite;
+      filter: drop-shadow(0 12px 24px rgba(255, 100, 130, 0.3));
+    }
+
+    @keyframes heartBeat {
+      0% { transform: scale(1); }
+      14% { transform: scale(1.22); }
+      28% { transform: scale(1.04); }
+      42% { transform: scale(1.26); }
+      70% { transform: scale(1); }
+      100% { transform: scale(1); }
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Screenshot Clean Mode */
+    body.screenshot-mode .hide-on-shot {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(10px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       AMBIENT LAYER: GRADIENT BLOBS + GRAIN + RISING EMOJIS + SUNRISE GLOW
+       ======================================================================== -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div class="emoji-layer" id="emoji-layer" aria-hidden="true"></div>
+  <div class="sunrise-sky-wash" id="sunrise-sky-wash" aria-hidden="true"></div>
+
+  <!-- Confetti Canvas for Finale -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Toast Notification (Replaces alert() cleanly) -->
+  <div id="toast-box"
+       class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-white text-sm font-bold text-gray-800 opacity-0 pointer-events-none transition-all duration-300 translate-y-[-10px]">
+    Ready! To screenshot  📸✨
+  </div>
+
+  <!-- ========================================================================
+       SCREEN 1: INTERACTIVE SUNRISE
+       ======================================================================== -->
+  <section id="screen-1" class="screen active cursor-pointer" role="button" tabindex="0" aria-label="Tap to raise the morning sun">
+    <!-- Rising Sun Orb -->
+    <div id="sun-orb" class="sun-orb" aria-hidden="true"></div>
+    <div class="horizon-line" aria-hidden="true"></div>
+
+    <!-- Foreground Greeting & Progress -->
+    <div class="relative z-10 flex flex-col items-center text-center max-w-md w-full px-4 mt-[-14vh]">
+      <span id="theme-badge" class="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase bg-white/75 backdrop-blur-md border border-white/80 shadow-sm mb-4 text-gray-600">
+        ✨ Morning Surprise ✨
+      </span>
+
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 leading-snug mb-3 drop-shadow-sm">
+        <span id="s1-name" class="font-name text-4xl sm:text-5xl shimmer-name block mb-1">Pamoli</span>
+        Good Morning ☀️
+      </h1>
+
+      <p id="s1-hint" class="text-sm sm:text-base font-semibold text-gray-600/90 mt-2 pulse-hint">
+        Screen a Tap Kore Dekho 👆✨
+      </p>
+
+      <!-- Subtle Sunrise Progress Pill -->
+      <div class="w-44 h-2 bg-white/60 rounded-full overflow-hidden mt-5 p-0.5 border border-white/80 shadow-inner">
+        <div id="sunrise-progress" class="h-full w-[12%] rounded-full transition-all duration-500" style="background: var(--btn-grad);"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 2: PERSONAL GREETING CARD WITH TYPEWRITER MESSAGE
+       ======================================================================== -->
+  <section id="screen-2" class="screen">
+    <div class="glass-card w-full max-w-md p-7 sm:p-9 text-center flex flex-col items-center">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-sm bg-white/80 border border-white">
+        <span id="s2-top-icon">💖</span>
+      </div>
+
+      <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Good Morning</p>
+
+      <!-- Large Pacifico Gradient Name -->
+      <h2 id="s2-name" class="font-name text-4xl sm:text-5xl shimmer-name mb-4">
+        Pamoli
+      </h2>
+
+      <!-- Typewriter Message Box -->
+      <div class="w-full min-h-[110px] sm:min-h-[120px] flex items-center justify-center bg-white/55 rounded-2xl p-4 sm:p-5 border border-white/80 mb-7 shadow-inner">
+        <p class="text-base sm:text-lg font-semibold text-gray-700 leading-relaxed">
+          <span id="typewriter-text"></span><span id="typewriter-cursor" class="typewriter-cursor"></span>
+        </p>
+      </div>
+
+      <!-- Next Button -->
+      <button id="btn-to-s3" class="btn-glossy opacity-0 pointer-events-none translate-y-2 transition-all duration-500">
+        Age Dekho ✨
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 3: TODAY'S PLAN ("Aaj ka plan kya hai?")
+       ======================================================================== -->
+  <section id="screen-3" class="screen">
+    <div class="glass-card w-full max-w-md p-7 sm:p-8 flex flex-col items-center">
+      <span class="px-3.5 py-1 rounded-full text-xs font-bold bg-white/80 text-gray-500 border border-white mb-2">
+        Today's Checklist 📋
+      </span>
+
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-6">
+        Ajer Plan Ki? Ami bolbo,Tumi Korbe? ✨
+      </h2>
+
+      <!-- Staggered Cute Plan Cards -->
+      <div id="plan-list" class="w-full space-y-3 mb-7">
+        <!-- Populated dynamically from CONFIG.PLAN_ITEMS -->
+      </div>
+
+      <button id="btn-to-s4" class="btn-glossy w-full sm:w-auto">
+        Next ✨
+      </button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 4: PLAYFUL QUESTION WITH RUNAWAY 'NAHI' BUTTON
+       ======================================================================== -->
+  <section id="screen-4" class="screen">
+    <div id="question-card" class="glass-card w-full max-w-md p-7 sm:p-9 text-center flex flex-col items-center relative z-20">
+      <div class="text-4xl mb-3 animate-bounce">🥺</div>
+
+      <h2 id="s4-question" class="text-xl sm:text-2xl font-bold text-gray-800 leading-snug mb-8">
+        Kya aaj hum mil sakte hain ya thodi der baat kar sakte hain?
+      </h2>
+
+      <!-- Button Arena -->
+      <div id="btn-arena" class="flex flex-wrap items-center justify-center gap-4 w-full min-h-[60px]">
+        <button id="btn-haan" class="btn-glossy">
+          Haan bilkul! 💖
+        </button>
+
+        <!-- Placeholder slot so layout stays balanced when Nahi turns fixed -->
+        <div id="nahi-placeholder" class="inline-block">
+          <button id="btn-nahi" class="btn-soft">
+            Nahi 🙈
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Funny Line Below Card -->
+    <p id="funny-line" class="mt-5 text-sm sm:text-base font-bold text-gray-700 bg-white/75 backdrop-blur-md px-5 py-2.5 rounded-full border border-white shadow-sm text-center max-w-xs sm:max-w-md transition-all duration-300">
+      Sob gulo Valo Kore Poro, Amar Feelings Guloi Likhechi.. 😉✨
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       SCREEN 5: CELEBRATION FINALE
+       ======================================================================== -->
+  <section id="screen-5" class="screen">
+    <div class="glass-card w-full max-w-md p-7 sm:p-9 text-center flex flex-col items-center">
+      <!-- Big Beating Emoji -->
+      <div id="s5-big-emoji" class="text-6xl sm:text-7xl mb-3 heartbeat-emoji">
+        💖
+      </div>
+
+      <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
+        Yayyy! 🎉
+      </h2>
+
+      <p id="s5-name-tag" class="font-name text-2xl sm:text-3xl shimmer-name mb-4">
+        Pamoli
+      </p>
+
+      <div class="w-full bg-white/60 rounded-2xl p-4 sm:p-5 border border-white/85 mb-7 shadow-inner">
+        <p id="s5-final-message" class="text-base sm:text-lg font-semibold text-gray-700 leading-relaxed">
+          Yayyy! Tumne mera din bana diya! Ab jaldi se ready ho jao, intezaar rahega! 🥰✨
+        </p>
+      </div>
+
+      <!-- Action Buttons (Hide smoothly during screenshot mode) -->
+      <div id="s5-actions" class="hide-on-shot flex flex-col sm:flex-row items-center justify-center gap-3 w-full transition-all duration-300">
+        <button id="btn-screenshot" class="btn-glossy w-full sm:w-auto">
+          📸 Screenshot le lo
+        </button>
+        <button id="btn-replay" class="btn-soft w-full sm:w-auto">
+          Phir se dekho 🔄
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       CONFIGURATION & INTERACTIVE APPLICATION LOGIC
+       ======================================================================== -->
+  <script>
+    /**
+     * ========================================================================
+     * EASY-TO-EDIT CONFIGURATION OBJECT
+     * Change TYPE to "crush" or "birthday" and customize any text below!
+     * ========================================================================
+     */
+    const CONFIG = {
+      TYPE: "crush", // Options: "crush" | "birthday"
+      NAAM: "pamoli",
+      MESSAGE: "Taratari Ghum Theke Otho! Ajker Dinta Tomar Motoi Sundor R Ujjal Hobe.. Keep smiling always! ☀️",
+      PLAN_ITEMS: [
+        "☕ Sokal a Gorom-Gorom coffee / chai..  (Jiv jno na Jole..)",
+        "😊 Tomar r Hasi aur Positive Vibes (Chokhe jol Jano Na Ase..)",
+        "💬 Time Kore Amar Sathe Misty Kotha, Saradin Er Golpo..",
+        "✨ Cholo Aaj Ker Din special Banai"
+      ],
+      SAWAAL: "Tomar kichu janar ache? 🥺",
+      HAAN_TEXT: "Haa! 💖",
+      NAHI_TEXT: "Na 🙈",
+      FINAL_MESSAGE: "Yayyy! Tumi Amar Dinta Sundor Kore Dile! Ekhon Taratari Toiri Hoye Nao, Ami Opekkha Korobo! 🥰✨"
+    };
+
+    /* Funny lines shown sequentially each time the 'NAHI' button dodges */
+    const FUNNY_LINES = [
+      "11. Eto Kichu Bole Dilam Ans Ta Debe To? jodi just Reply daw To vebe NEbo Ans NA,R Msg kore Distube korbo Na! 💖🎉",
+      "1. Good Morning er reply I LOVE YOU o dite paro 😜",
+      "2. I MISS YOU hole o cholbe? 👀💖",
+      "3. Tumi Na Dhorte Chaw, R Ami Na Charte Parchi! 🥰",
+      "4. Tahole ki Tarokeswar Puro Ta hatar fol ki Pabo NA 😂",
+      "5. Valobaste Gele LOjja ke ektu Side a Rakhte hoi,R ami to Alredy Nirlojjo 😂",
+      "6. Madam Dekhte Pachi Na, Bolben Signel ta GREEN na RED ? 😅🏃‍♂️",
+      "7. Tomake dekhale Janina Muk Theke Awaz beroi Na, Tai Msg Bolchi 🥺✨",
+      "8. R Koto din Waiting List a Rakhbe 😜",
+      "9. Romar Ans Ha Hok Ba Na Life Dujor ei Kete jbe, 🥰",
+      "10. Ans gulo Ekbar a Diye Jeo. 👀💖"
+      
+    ];
+
+    /* Theme Presets for Crush vs Birthday */
+    const THEMES = {
+      crush: {
+        bgBase: "#fff9fc",
+        blob1: "#ff758c",
+        blob2: "#a18cd1",
+        blob3: "#8fd3f4",
+        btnGrad: "linear-gradient(135deg, #ff758c 0%, #a18cd1 55%, #70b8ff 100%)",
+        btnGlow: "rgba(255, 117, 140, 0.45)",
+        textGrad: "linear-gradient(120deg, #ff5e8e, #9b6ef3, #4facfe, #ff5e8e)",
+        emojis: ["💖", "✨", "🌸"],
+        topIcon: "💖",
+        bigEmoji: "💖",
+        badge: "✨ Morning Surprise ✨",
+        confettiColors: ["#ff758c", "#ff7eb3", "#a18cd1", "#8fd3f4", "#ffd1dc"]
+      },
+      birthday: {
+        bgBase: "#fffaf5",
+        blob1: "#ff9a9e",
+        blob2: "#f6d365",
+        blob3: "#fda085",
+        btnGrad: "linear-gradient(135deg, #ff7e5f 0%, #feb47b 50%, #f6d365 100%)",
+        btnGlow: "rgba(253, 160, 133, 0.5)",
+        textGrad: "linear-gradient(120deg, #ff6b6b, #ff9f43, #feca57, #ff6b6b)",
+        emojis: ["🎂", "🎈", "🎉"],
+        topIcon: "🎂",
+        bigEmoji: "🎂",
+        badge: "🎉 Birthday Morning 🎉",
+        confettiColors: ["#ff9a9e", "#fda085", "#f6d365", "#ff6b6b", "#ffeaa7"]
+      }
+    };
+
+    /* Application State */
+    const state = {
+      currentScreen: 1,
+      sunTaps: 0,
+      maxSunTaps: 5,
+      sunriseComplete: false,
+      typewriterTimer: null,
+      nahiDodges: 0,
+      haanScale: 1,
+      confettiActive: false,
+      confettiParticles: []
+    };
+
+    /* Active Theme Reference */
+    const activeTheme = THEMES[CONFIG.TYPE?.toLowerCase() === "birthday" ? "birthday" : "crush"];
+
+    /* ========================================================================
+       INITIALIZE THEME & POPULATE CONTENT FROM CONFIG
+       ======================================================================== */
+    function initThemeAndContent() {
+      const root = document.documentElement;
+      root.style.setProperty("--bg-base", activeTheme.bgBase);
+      root.style.setProperty("--blob-1", activeTheme.blob1);
+      root.style.setProperty("--blob-2", activeTheme.blob2);
+      root.style.setProperty("--blob-3", activeTheme.blob3);
+      root.style.setProperty("--btn-grad", activeTheme.btnGrad);
+      root.style.setProperty("--btn-glow", activeTheme.btnGlow);
+      root.style.setProperty("--text-grad", activeTheme.textGrad);
+
+      // Populate text fields
+      document.getElementById("theme-badge").textContent = activeTheme.badge;
+      document.getElementById("s1-name").textContent = CONFIG.NAAM;
+      document.getElementById("s2-name").textContent = CONFIG.NAAM;
+      document.getElementById("s2-top-icon").textContent = activeTheme.topIcon;
+      document.getElementById("s4-question").textContent = CONFIG.SAWAAL;
+      document.getElementById("btn-haan").textContent = CONFIG.HAAN_TEXT;
+      document.getElementById("btn-nahi").textContent = CONFIG.NAHI_TEXT;
+      document.getElementById("s5-big-emoji").textContent = activeTheme.bigEmoji;
+      document.getElementById("s5-name-tag").textContent = CONFIG.NAAM;
+      document.getElementById("s5-final-message").textContent = CONFIG.FINAL_MESSAGE;
+
+      // Populate Today's Plan items
+      const planList = document.getElementById("plan-list");
+      planList.innerHTML = "";
+      CONFIG.PLAN_ITEMS.forEach((itemText) => {
+        const div = document.createElement("div");
+        div.className = "plan-item flex items-center gap-3.5 bg-white/75 backdrop-blur-md px-4 py-3.5 rounded-2xl border border-white/90 shadow-sm";
+        div.innerHTML = `
+          <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: var(--btn-grad);"></span>
+          <span class="text-sm sm:text-base font-bold text-gray-700">${itemText}</span>
+        `;
+        planList.appendChild(div);
+      });
+    }
+
+    /* ========================================================================
+       BACKGROUND RISING TRANSPARENT EMOJIS
+       ======================================================================== */
+    function startFloatingEmojis() {
+      const layer = document.getElementById("emoji-layer");
+
+      function spawnEmoji() {
+        const el = document.createElement("span");
+        el.className = "floating-emoji";
+        const emojiList = activeTheme.emojis;
+        el.textContent = emojiList[Math.floor(Math.random() * emojiList.length)];
+
+        const left = Math.random() * 94 + 2; // 2% to 96%
+        const size = Math.floor(Math.random() * 16) + 18; // 18px to 34px
+        const duration = (Math.random() * 6 + 8).toFixed(1); // 8s to 14s
+        const drift = (Math.random() * 60 - 30).toFixed(0) + "px";
+        const rot = (Math.random() * 50 - 25).toFixed(0) + "deg";
+
+        el.style.left = `${left}%`;
+        el.style.fontSize = `${size}px`;
+        el.style.animationDuration = `${duration}s`;
+        el.style.setProperty("--drift", drift);
+        el.style.setProperty("--rot", rot);
+
+        layer.appendChild(el);
+        setTimeout(() => {
+          if (el.parentNode) el.parentNode.removeChild(el);
+        }, parseFloat(duration) * 1000 + 200);
+      }
+
+      // Initial gentle burst
+      for (let i = 0; i < 6; i++) {
+        setTimeout(spawnEmoji, i * 450);
+      }
+      setInterval(spawnEmoji, 1300);
+    }
+
+    /* ========================================================================
+       SCREEN TRANSITION MANAGER
+       ======================================================================== */
+    function goToScreen(num) {
+      document.querySelectorAll(".screen").forEach((sec) => {
+        sec.classList.remove("active");
+      });
+
+      const target = document.getElementById(`screen-${num}`);
+      if (target) {
+        target.classList.add("active");
+        state.currentScreen = num;
+      }
+
+      // Trigger screen-specific entrance logic
+      if (num === 2) {
+        startTypewriter();
+      } else if (num === 3) {
+        animatePlanItems();
+      } else if (num === 4) {
+        resetRunawayButton();
+      } else if (num === 5) {
+        startConfetti();
+      }
+    }
+
+    /* ========================================================================
+       SCREEN 1: INTERACTIVE SUNRISE LOGIC
+       ======================================================================== */
+    const screen1 = document.getElementById("screen-1");
+    const sunOrb = document.getElementById("sun-orb");
+    const skyWash = document.getElementById("sunrise-sky-wash");
+    const sunriseProgress = document.getElementById("sunrise-progress");
+    const s1Hint = document.getElementById("s1-hint");
+
+    function handleSunriseTap() {
+      if (state.currentScreen !== 1 || state.sunriseComplete) return;
+
+      state.sunTaps = Math.min(state.sunTaps + 1, state.maxSunTaps);
+      const ratio = state.sunTaps / state.maxSunTaps;
+
+      // Raise sun smoothly from bottom (-85px) up into the sky
+      const maxLift = Math.min(window.innerHeight * 0.44, 340);
+      const liftY = ratio * maxLift;
+      const scale = 1 + ratio * 0.28;
+
+      sunOrb.style.transform = `translateY(-${liftY}px) scale(${scale})`;
+      skyWash.style.opacity = (0.15 + ratio * 0.75).toFixed(2);
+      sunriseProgress.style.width = `${Math.max(12, ratio * 100)}%`;
+
+      const hints = [
+        "Oi Sun Beroche 🌅",
+        "Wah! Sun Sining ✨",
+        "Bas R ektu koro! ☀️",
+        "Almost full morning glow! 🌟",
+        "Good Morning! Surjo Uthe Porlo ☀️💖"
+      ];
+      s1Hint.textContent = hints[state.sunTaps - 1] || hints[4];
+
+      if (state.sunTaps >= state.maxSunTaps) {
+        state.sunriseComplete = true;
+        setTimeout(() => {
+          // Fade sun gently after transition
+          sunOrb.style.opacity = "0.22";
+          goToScreen(2);
+        }, 850);
+      }
+    }
+
+    screen1.addEventListener("click", handleSunriseTap);
+    screen1.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleSunriseTap();
+      }
+    });
+
+    /* ========================================================================
+       SCREEN 2: TYPEWRITER EFFECT
+       ======================================================================== */
+    function startTypewriter() {
+      const textEl = document.getElementById("typewriter-text");
+      const cursorEl = document.getElementById("typewriter-cursor");
+      const nextBtn = document.getElementById("btn-to-s3");
+
+      clearInterval(state.typewriterTimer);
+      textEl.textContent = "";
+      cursorEl.style.display = "inline-block";
+      nextBtn.classList.add("opacity-0", "pointer-events-none", "translate-y-2");
+
+      // Use Array.from so emojis/surrogate pairs type cleanly without splitting
+      const chars = Array.from(CONFIG.MESSAGE);
+      let idx = 0;
+
+      state.typewriterTimer = setInterval(() => {
+        if (idx < chars.length) {
+          textEl.textContent += chars[idx];
+          idx++;
+        } else {
+          clearInterval(state.typewriterTimer);
+          setTimeout(() => {
+            nextBtn.classList.remove("opacity-0", "pointer-events-none", "translate-y-2");
+          }, 250);
+        }
+      }, 36);
+    }
+
+    document.getElementById("btn-to-s3").addEventListener("click", () => goToScreen(3));
+
+    /* ========================================================================
+       SCREEN 3: STAGGERED PLAN ITEMS
+       ======================================================================== */
+    function animatePlanItems() {
+      const items = document.querySelectorAll(".plan-item");
+      items.forEach((item, index) => {
+        item.classList.remove("show");
+        setTimeout(() => {
+          item.classList.add("show");
+        }, 160 + index * 170);
+      });
+    }
+
+    document.getElementById("btn-to-s4").addEventListener("click", () => goToScreen(4));
+
+    /* ========================================================================
+       SCREEN 4: RUNAWAY 'NAHI' BUTTON (STRICTLY INSIDE VIEWPORT, NEVER OVERLAPS CARD)
+       ======================================================================== */
+    const btnNahi = document.getElementById("btn-nahi");
+    const btnHaan = document.getElementById("btn-haan");
+    const questionCard = document.getElementById("question-card");
+    const funnyLineEl = document.getElementById("funny-line");
+    const nahiPlaceholder = document.getElementById("nahi-placeholder");
+
+    function triggerNotePop(text) {
+      funnyLineEl.textContent = text;
+      funnyLineEl.classList.remove("note-pop");
+      // Force reflow so the pop animation replays on every sequential note
+      void funnyLineEl.offsetWidth;
+      funnyLineEl.classList.add("note-pop");
+    }
+
+    function resetRunawayButton() {
+      state.nahiDodges = 0;
+      state.haanScale = 1;
+      btnHaan.style.transform = "scale(1)";
+      triggerNotePop("Sob gulo Valo Kore Poro, Amar Feelings Guloi Likhechi.. 😉✨");
+
+      // Return Nahi button back inside its inline slot inside the card
+      if (btnNahi.parentNode !== nahiPlaceholder) {
+        nahiPlaceholder.appendChild(btnNahi);
+      }
+      btnNahi.style.position = "relative";
+      btnNahi.style.left = "auto";
+      btnNahi.style.top = "auto";
+      btnNahi.style.margin = "0";
+      nahiPlaceholder.style.width = "auto";
+      nahiPlaceholder.style.height = "auto";
+    }
+
+    function clampToViewport(x, y, btnW, btnH, vw, vh, pad) {
+      const minX = pad;
+      const maxX = Math.max(pad, vw - btnW - pad);
+      const minY = pad;
+      const maxY = Math.max(pad, vh - btnH - pad);
+      return {
+        x: Math.min(Math.max(x, minX), maxX),
+        y: Math.min(Math.max(y, minY), maxY)
+      };
+    }
+
+    function moveNahiButton(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // Move btnNahi directly to <body> so CSS transform on .screen never offsets fixed coordinates
+      if (btnNahi.parentNode !== document.body) {
+        const rect = btnNahi.getBoundingClientRect();
+        nahiPlaceholder.style.width = `${rect.width}px`;
+        nahiPlaceholder.style.height = `${rect.height}px`;
+        document.body.appendChild(btnNahi);
+        btnNahi.style.position = "fixed";
+        btnNahi.style.margin = "0";
+        btnNahi.style.left = `${rect.left}px`;
+        btnNahi.style.top = `${rect.top}px`;
+      }
+
+      const btnRect = btnNahi.getBoundingClientRect();
+      const cardRect = questionCard.getBoundingClientRect();
+      const noteRect = funnyLineEl.getBoundingClientRect();
+
+      // Use accurate visible viewport dimensions (handles mobile browser bars properly)
+      const vw = window.visualViewport ? window.visualViewport.width : document.documentElement.clientWidth;
+      const vh = window.visualViewport ? window.visualViewport.height : document.documentElement.clientHeight;
+
+      const edgePad = 18; // Safe padding from all 4 screen edges
+      const boxBuffer = 14; // Buffer around central card & bottom note pill
+
+      const minX = edgePad;
+      const maxX = Math.max(edgePad, vw - btnRect.width - edgePad);
+      const minY = edgePad;
+      const maxY = Math.max(edgePad, vh - btnRect.height - edgePad);
+
+      let targetX = minX;
+      let targetY = minY;
+      let foundSafeSpot = false;
+
+      // Alternate bias left/right so it playfully jumps epash-opash across the screen
+      const preferLeftSide = state.nahiDodges % 2 === 0;
+
+      for (let attempt = 0; attempt < 90; attempt++) {
+        let candX;
+        if (attempt < 50) {
+          // Bias toward opposite horizontal half for lively left-right movement
+          const halfW = (maxX - minX) * 0.5;
+          candX = preferLeftSide
+            ? minX + Math.random() * halfW
+            : minX + halfW + Math.random() * halfW;
+        } else {
+          candX = minX + Math.random() * (maxX - minX);
+        }
+        const candY = minY + Math.random() * (maxY - minY);
+
+        const overlapsCard = !(
+          candX + btnRect.width < cardRect.left - boxBuffer ||
+          candX > cardRect.right + boxBuffer ||
+          candY + btnRect.height < cardRect.top - boxBuffer ||
+          candY > cardRect.bottom + boxBuffer
+        );
+
+        const overlapsNote = !(
+          candX + btnRect.width < noteRect.left - boxBuffer ||
+          candX > noteRect.right + boxBuffer ||
+          candY + btnRect.height < noteRect.top - boxBuffer ||
+          candY > noteRect.bottom + boxBuffer
+        );
+
+        const dist = Math.hypot(candX - btnRect.left, candY - btnRect.top);
+
+        if (!overlapsCard && !overlapsNote && dist > 60) {
+          targetX = candX;
+          targetY = candY;
+          foundSafeSpot = true;
+          break;
+        }
+      }
+
+      // Deterministic safe fallback (above card or below note) strictly inside viewport
+      if (!foundSafeSpot) {
+        const spaceAbove = cardRect.top - btnRect.height - boxBuffer - edgePad;
+        const spaceBelow = vh - (noteRect.bottom + boxBuffer + btnRect.height + edgePad);
+
+        targetX = preferLeftSide ? minX : maxX;
+        if (spaceAbove >= 0) {
+          targetY = Math.max(minY, cardRect.top - btnRect.height - boxBuffer);
+        } else if (spaceBelow >= 0) {
+          targetY = Math.min(maxY, noteRect.bottom + boxBuffer);
+        } else {
+          targetY = preferLeftSide ? minY : maxY;
+        }
+      }
+
+      // Final strict clamp so it can NEVER escape the screen edges
+      const clamped = clampToViewport(targetX, targetY, btnRect.width, btnRect.height, vw, vh, edgePad);
+      btnNahi.style.left = `${clamped.x}px`;
+      btnNahi.style.top = `${clamped.y}px`;
+
+      // Grow HAAN button slightly & show sequential cute note one after another
+      const lineIndex = state.nahiDodges % FUNNY_LINES.length;
+      triggerNotePop(FUNNY_LINES[lineIndex]);
+
+      state.nahiDodges++;
+      state.haanScale = Math.min(1.55, 1 + state.nahiDodges * 0.08);
+      btnHaan.style.transform = `scale(${state.haanScale.toFixed(2)})`;
+    }
+
+    // Re-clamp button if window/orientation resizes while on Screen 4
+    window.addEventListener("resize", () => {
+      if (state.currentScreen === 4 && btnNahi.style.position === "fixed") {
+        const btnRect = btnNahi.getBoundingClientRect();
+        const vw = window.visualViewport ? window.visualViewport.width : document.documentElement.clientWidth;
+        const vh = window.visualViewport ? window.visualViewport.height : document.documentElement.clientHeight;
+        const clamped = clampToViewport(btnRect.left, btnRect.top, btnRect.width, btnRect.height, vw, vh, 18);
+        btnNahi.style.left = `${clamped.x}px`;
+        btnNahi.style.top = `${clamped.y}px`;
+      }
+    });
+
+    // Trigger runaway on hover, touch, pointerdown, and click
+    btnNahi.addEventListener("mouseover", moveNahiButton);
+    btnNahi.addEventListener("touchstart", moveNahiButton, { passive: false });
+    btnNahi.addEventListener("click", moveNahiButton);
+
+    // HAAN button click -> Celebration Finale
+    btnHaan.addEventListener("click", () => {
+      // Hide floating Nahi button cleanly
+      btnNahi.style.display = "none";
+      goToScreen(5);
+    });
+
+    /* ========================================================================
+       SCREEN 5: CONTINUOUS CANVAS CONFETTI & SCREENSHOT / REPLAY ACTIONS
+       ======================================================================== */
+    const confettiCanvas = document.getElementById("confetti-canvas");
+    const ctx = confettiCanvas.getContext("2d");
+    let confettiAnimId = null;
+
+    function resizeConfettiCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeConfettiCanvas);
+    resizeConfettiCanvas();
+
+    function createParticle(fromTop = false) {
+      const colors = activeTheme.confettiColors;
+      return {
+        x: Math.random() * confettiCanvas.width,
+        y: fromTop ? -15 : Math.random() * confettiCanvas.height - confettiCanvas.height,
+        w: Math.random() * 9 + 5,
+        h: Math.random() * 5 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        speedY: Math.random() * 2.5 + 1.8,
+        speedX: Math.random() * 2 - 1,
+        angle: Math.random() * 360,
+        spin: Math.random() * 8 - 4,
+        shape: Math.random() > 0.35 ? "rect" : "circle"
+      };
+    }
+
+    function startConfetti() {
+      state.confettiActive = true;
+      state.confettiParticles = [];
+      for (let i = 0; i < 110; i++) {
+        state.confettiParticles.push(createParticle(false));
+      }
+
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+
+      function renderConfetti() {
+        if (!state.confettiActive) {
+          ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+          return;
+        }
+
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+        state.confettiParticles.forEach((p, i) => {
+          p.y += p.speedY;
+          p.x += p.speedX + Math.sin(p.y * 0.02) * 0.6;
+          p.angle += p.spin;
+
+          if (p.y > confettiCanvas.height + 20) {
+            state.confettiParticles[i] = createParticle(true);
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.angle * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+
+          if (p.shape === "circle") {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          }
+          ctx.restore();
+        });
+
+        confettiAnimId = requestAnimationFrame(renderConfetti);
+      }
+
+      renderConfetti();
+    }
+
+    function stopConfetti() {
+      state.confettiActive = false;
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    }
+
+    // Toast helper
+    function showToast(msg) {
+      const toast = document.getElementById("toast-box");
+      toast.textContent = msg;
+      toast.classList.remove("opacity-0", "translate-y-[-10px]");
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-[-10px]");
+      }, 2600);
+    }
+
+    // Screenshot button: briefly hides action buttons for a clean capture
+    document.getElementById("btn-screenshot").addEventListener("click", () => {
+      document.body.classList.add("screenshot-mode");
+      showToast("Ready! To screenshot 📸✨");
+      setTimeout(() => {
+        document.body.classList.remove("screenshot-mode");
+      }, 3600);
+    });
+
+    // Replay button: cleanly resets everything back to Screen 1
+    document.getElementById("btn-replay").addEventListener("click", () => {
+      stopConfetti();
+      state.sunTaps = 0;
+      state.sunriseComplete = false;
+      sunOrb.style.transform = "translateY(0px) scale(1)";
+      sunOrb.style.opacity = "1";
+      skyWash.style.opacity = "0.15";
+      sunriseProgress.style.width = "12%";
+      s1Hint.textContent = "Screen a Tap Kore Dekho 👆✨";
+
+      btnNahi.style.display = "inline-flex";
+      resetRunawayButton();
+      goToScreen(1);
+    });
+
+    /* ========================================================================
+       BOOT APPLICATION
+       ======================================================================== */
+    window.addEventListener("DOMContentLoaded", () => {
+      initThemeAndContent();
+      startFloatingEmojis();
+    });
+    
+  </script>
+  <audio id="bgMusic" autoplay loop>
+    <source src="love.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+const music = document.getElementById("bgMusic");
+
+// ব্রাউজার ব্লক করলে প্রথম ক্লিকেই গান চালু হবে
+document.addEventListener("click", () => {
+    music.play().catch(() => {});
+}, { once: true });
+</script>
+</body>
+</html>
